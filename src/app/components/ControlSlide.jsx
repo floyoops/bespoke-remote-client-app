@@ -1,7 +1,7 @@
 var React = require('react');
 var RaisedButton = require('material-ui/lib/raised-button');
 
-var ControleSlide = React.createClass({
+var ControlSlide = React.createClass({
     getInitialState: function() {
         return {
             note: null
@@ -64,4 +64,4 @@ var ControleSlide = React.createClass({
     }
 });
 
-module.exports = ControleSlide;
+module.exports = ControlSlide;
