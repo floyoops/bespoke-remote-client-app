@@ -1,115 +1,20 @@
 /** In this file, we create a React component which incorporates components provided by material-ui */
+var socket = require('socket.io-client')('http://localhost:8000');
 
-const React = require('react');
-const RaisedButton = require('material-ui/lib/raised-button');
-const AppBar = require('material-ui/lib/app-bar');
-const ThemeManager = require('material-ui/lib/styles/theme-manager');
-const LightRawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
-const Colors = require('material-ui/lib/styles/colors');
-const socket = require('socket.io-client')('http://localhost:8000');
+var React = require('react');
 
-const SlideItem = React.createClass({
-  getInitialState: function() {
-    return {
-      slide: this.props.slide,
-      setSlideActive: this.props.setSlideActive
-    }
-  },
-  activeSlide: function() {
-    this.state.setSlideActive(this.state.slide);
-  },
-  render: function() {
-    return (
-        <RaisedButton label={this.state.slide.token} fullWidth={true} onTouchTap={this.activeSlide} />
-    );
-  }
-});
+// Material-ui
+var AppBar = require('material-ui/lib/app-bar');
+var ThemeManager = require('material-ui/lib/styles/theme-manager');
+var LightRawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
+var Colors = require('material-ui/lib/styles/colors');
 
-const SlideList = React.createClass({
-  render: function() {
-    if (this.props.slideActive) {
-      return false;
-    }
+// BespokeApp
+var ControlSlide = require('./ControlSlide.jsx');
+var SlideList = require('./SlideList.jsx');
 
-    var that = this;
-    var rows = this.props.slides.map(function(slide, i) {
-      return <SlideItem key={slide.token} slide={slide} setSlideActive={that.props.setSlideActive} />
-    });
 
-    return (
-      <div>
-        <h1>Choose</h1>
-        {rows}
-      </div>
-    );
-  }
-});
-
-const ControlSlide = React.createClass({
-  getInitialState: function() {
-    return {
-      note: null
-    };
-  },
-  componentWillMount: function() {
-    var that = this;
-    socket.on('client-flopoke-note', function(objNote) {
-      that.setState({note: objNote.note});
-    });
-  },
-  next: function() {
-    socket.emit('bespoke-action', 'next');
-  },
-  prev: function() {
-    socket.emit('bespoke-action', 'prev');
-  },
-  stop: function() {
-    this.props.setSlideActive(null);
-  },
-  flopoke_finger1_start: function() {
-    socket.emit('bespoke-action', 'flopoke-finger1-start');
-  },
-  render: function() {
-    if (this.props.slideActive == null) {
-      return false;
-    }
-
-    return (
-      <div>
-        <h1>Control {this.props.slideActive.token}</h1>
-        <div>
-          <RaisedButton
-            ref="a"
-            fullWidth={true}
-            label="Précédent"
-            onTouchTap={this.prev}
-          />
-          <br /><br />
-          <RaisedButton
-            ref="b"
-            fullWidth={true}
-            label="Suivant"
-            onTouchTap={this.next}
-          />
-          <br /><br />
-          <RaisedButton
-            ref="b"
-            fullWidth={true}
-            label="Whaaaat ??"
-            onTouchTap={this.flopoke_finger1_start}
-          />
-        </div>
-        <div style={{margin: 20, height: 180, overflowY: 'auto'}}>{this.state.note}</div>
-        <div>
-          <RaisedButton ref="c" fullWidth={true} label="Stop" onTouchTap={this.stop} />
-        </div>
-      </div>
-    );
-
-  }
-});
-
-const Main = React.createClass({
+var Main = React.createClass({
 
   childContextTypes: {
     muiTheme: React.PropTypes.object
@@ -117,6 +22,7 @@ const Main = React.createClass({
 
   getInitialState () {
     return {
+      socket: socket,
       slides: [],
       slideActive: null,
       muiTheme: ThemeManager.getMuiTheme(LightRawTheme),
@@ -149,7 +55,7 @@ const Main = React.createClass({
   },
   setSlideActive(slide) {
     if (slide !== null) {
-      socket.emit('setRemoteUser', slide.token);
+      this.state.socket.emit('setRemoteUser', slide.token);
     }
 
     this.state.slideActive = slide;
@@ -163,7 +69,7 @@ const Main = React.createClass({
 
     var that = this;
 
-    socket.on('client-list-users', function(users) {
+    this.state.socket.on('client-list-users', function(users) {
       that.removeAllSlides();
       users.map(function(user) {
         that.addSlide({token: user});
@@ -171,18 +77,13 @@ const Main = React.createClass({
     });
 
     this.setState({muiTheme: newMuiTheme});
-    socket.emit('list-users');
+    this.state.socket.emit('list-users');
   },
 
   render() {
-
     let containerStyle = {
       textAlign: 'center',
     };
-
-    let standardActions = [
-      { text: 'Okay' }
-    ];
 
     return (
       <div style={containerStyle}>
@@ -197,12 +98,11 @@ const Main = React.createClass({
         <ControlSlide
           slideActive={this.state.slideActive}
           setSlideActive={this.setSlideActive}
+          socket={this.state.socket}
         />
-
       </div>
     );
   }
-
 });
 
 module.exports = Main;
