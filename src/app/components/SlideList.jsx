@@ -2,14 +2,14 @@ var React = require('react');
 var SlideItem = require('./SlideItem.jsx');
 
 var SlideList = React.createClass({
-    render: function() {
+    render: function () {
         if (this.props.slideActive) {
             return false;
         }
 
         var that = this;
-        var rows = this.props.slides.map(function(slide, i) {
-            return <SlideItem key={slide.token} slide={slide} setSlideActive={that.props.setSlideActive} />
+        var rows = this.props.slides.map(function (slide, i) {
+            return <SlideItem key={slide.token} slide={slide} setSlideActive={that.props.setSlideActive}/>
         });
 
         return (
