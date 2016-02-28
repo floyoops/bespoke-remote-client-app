@@ -29,7 +29,7 @@ var FormName = React.createClass({
                         label="Envoyer"
                         primary={true}
                         fullWidth={true}
-                        onTouchEnd={this.handleForm}
+                        onTouchTap={this.handleForm}
                     />
                 </form>
             );
