@@ -12,7 +12,7 @@ var Colors = require('material-ui/lib/styles/colors');
 // BespokeApp
 var ControlSlide = require('./ControlSlide.jsx');
 var SlideList = require('./SlideList.jsx');
-var FormName = require('./FormName.jsx');
+var FormName = require('./formName.jsx');
 
 
 var Main = React.createClass({
