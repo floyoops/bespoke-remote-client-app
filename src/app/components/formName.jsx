@@ -4,11 +4,15 @@ var TextField = require('material-ui/lib/text-field');
 
 var FormName = React.createClass({
     getInitialState: function () {
-        return {userName: this.props.userName};
+        return {
+            userName: this.props.userName,
+            socket: this.props.socket
+        };
     },
     handleForm: function (e) {
         e.preventDefault();
         this.state.userName = this.refs.nameuser.getValue();
+        this.state.socket.emit('setUserName', this.state.userName);
         this.setState({userName: this.state.userName});
     },
     render: function () {

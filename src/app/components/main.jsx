@@ -90,7 +90,10 @@ var Main = React.createClass({
             <div style={containerStyle}>
                 <AppBar title="Bespoke remote"/>
 
-                <FormName username={this.state.userName} />
+                <FormName
+                    username={this.state.userName}
+                    socket={this.state.socket}
+                />
 
                 <SlideList
                     slides={this.state.slides}
