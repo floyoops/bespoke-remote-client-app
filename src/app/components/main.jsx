@@ -12,6 +12,7 @@ var Colors = require('material-ui/lib/styles/colors');
 // BespokeApp
 var ControlSlide = require('./ControlSlide.jsx');
 var SlideList = require('./SlideList.jsx');
+var FormName = require('./FormName.jsx');
 
 
 var Main = React.createClass({
@@ -26,6 +27,7 @@ var Main = React.createClass({
             slides: [],
             slideActive: null,
             muiTheme: ThemeManager.getMuiTheme(LightRawTheme),
+            userName: null,
         };
     },
 
@@ -79,7 +81,6 @@ var Main = React.createClass({
         this.setState({muiTheme: newMuiTheme});
         this.state.socket.emit('list-users');
     },
-
     render() {
         let containerStyle = {
             textAlign: 'center',
@@ -88,6 +89,11 @@ var Main = React.createClass({
         return (
             <div style={containerStyle}>
                 <AppBar title="Bespoke remote"/>
+
+                <FormName
+                    username={this.state.userName}
+                    socket={this.state.socket}
+                />
 
                 <SlideList
                     slides={this.state.slides}
