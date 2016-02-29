@@ -1,5 +1,5 @@
 /** In this file, we create a React component which incorporates components provided by material-ui */
-var socket = require('socket.io-client')('http://localhost:8000');
+var socket = require('socket.io-client')('http://lespandas.fr:8000');
 
 var React = require('react');
 
@@ -81,6 +81,10 @@ var Main = React.createClass({
         this.setState({muiTheme: newMuiTheme});
         this.state.socket.emit('list-users');
     },
+    setUserName(userName) {
+        this.state.userName = userName;
+        this.setState({userName: this.state.userName});
+    },
     render() {
         let containerStyle = {
             textAlign: 'center',
@@ -91,11 +95,14 @@ var Main = React.createClass({
                 <AppBar title="Bespoke remote"/>
 
                 <FormName
-                    username={this.state.userName}
+                    userName={this.state.userName}
+                    setUserName={this.setUserName}
                     socket={this.state.socket}
                 />
 
                 <SlideList
+                    userName={this.state.userName}
+                    setUserName={this.setUserName}
                     slides={this.state.slides}
                     slideActive={this.state.slideActive}
                     setSlideActive={this.setSlideActive}
