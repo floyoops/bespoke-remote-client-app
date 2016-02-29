@@ -3,11 +3,18 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var SlideItem = require('./SlideItem.jsx');
 
 var SlideList = React.createClass({
+    getInitialState: function () {
+        return {
+            User: this.props.User,
+            saveUser: this.props.saveUser
+        };
+    },
     stop: function() {
-        this.props.setUserName(null);
+        this.state.User.reset();
+        this.props.saveUser(this.state.User);
     },
     render: function () {
-        if (this.props.userName == null) {
+        if (this.state.User.getName() == null) {
             return null;
         }
 

@@ -1,5 +1,5 @@
 /** In this file, we create a React component which incorporates components provided by material-ui */
-var socket = require('socket.io-client')('http://lespandas.fr:8000');
+var socket = require('socket.io-client')('http://localhost:8000');
 
 var React = require('react');
 
@@ -13,6 +13,7 @@ var Colors = require('material-ui/lib/styles/colors');
 var ControlSlide = require('./ControlSlide.jsx');
 var SlideList = require('./SlideList.jsx');
 var FormName = require('./formName.jsx');
+var User = require('../model/User.js');
 
 
 var Main = React.createClass({
@@ -27,7 +28,7 @@ var Main = React.createClass({
             slides: [],
             slideActive: null,
             muiTheme: ThemeManager.getMuiTheme(LightRawTheme),
-            userName: null,
+            User: User
         };
     },
 
@@ -81,9 +82,17 @@ var Main = React.createClass({
         this.setState({muiTheme: newMuiTheme});
         this.state.socket.emit('list-users');
     },
-    setUserName(userName) {
-        this.state.userName = userName;
-        this.setState({userName: this.state.userName});
+    setAutoUserAdmin() {
+        if (this.state.userName == 'admin') {
+            this.state.userIsAdmin = true;
+        }
+    },
+    saveUser(User) {
+        if (User.getName() == 'admin') {
+            User.isAdmin = true;
+        }
+
+        this.setState({User: User});
     },
     render() {
         let containerStyle = {
@@ -95,24 +104,26 @@ var Main = React.createClass({
                 <AppBar title="Bespoke remote"/>
 
                 <FormName
-                    userName={this.state.userName}
-                    setUserName={this.setUserName}
+                    User={this.state.User}
+                    saveUser={this.saveUser}
                     socket={this.state.socket}
                 />
 
                 <SlideList
-                    userName={this.state.userName}
-                    setUserName={this.setUserName}
+                    User={this.state.User}
+                    saveUser={this.saveUser}
                     slides={this.state.slides}
                     slideActive={this.state.slideActive}
                     setSlideActive={this.setSlideActive}
                 />
 
                 <ControlSlide
+                    User={this.state.User}
                     slideActive={this.state.slideActive}
                     setSlideActive={this.setSlideActive}
                     socket={this.state.socket}
                 />
+
             </div>
         );
     }
